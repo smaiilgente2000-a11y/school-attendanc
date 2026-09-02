@@ -1,0 +1,172 @@
+/* ================ التنسيقات العامة ================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #007bff;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --dark-color: #333;
+    --light-gray: #f8f9fa;
+    --border-color: #ddd;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    direction: rtl;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* ================ الترويسة ================ */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+h1 {
+    color: var(--dark-color);
+    margin-bottom: 5px;
+    font-size: 2.2rem;
+}
+
+.school-name {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.date-display {
+    font-size: 1.3rem;
+    color: #666;
+    background: var(--light-gray);
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+/* ================ باقي التنسيقات (كما هي) ================ */
+/* ... (جميع التنسيقات السابقة تبقى كما هي) ... */
+
+/* ================ تنسيقات البطاقة للطباعة ================ */
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+.student-card {
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 20px;
+    width: 280px;
+    text-align: center;
+    background: white;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    page-break-inside: avoid;
+}
+
+.student-card .school-name-card {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 5px;
+}
+
+.student-card .student-name {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+.student-card .student-level {
+    font-size: 1rem;
+    color: #555;
+    margin: 5px 0;
+}
+
+.student-card .student-code {
+    font-size: 0.9rem;
+    color: #999;
+    margin: 5px 0 10px;
+}
+
+.student-card svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ================ التنسيقات المتجاوبة ================ */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    .lists-section {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-bar {
+        grid-template-columns: 1fr;
+    }
+
+    #scanInput {
+        width: 100%;
+    }
+
+    .tabs {
+        flex-direction: column;
+    }
+
+    .tab-btn {
+        border-radius: 8px;
+    }
+
+    .add-student-form {
+        flex-direction: column;
+    }
+}
+
+/* ================ للطباعة ================ */
+@media print {
+    body {
+        background: white;
+    }
+
+    .container {
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .student-card {
+        break-inside: avoid;
+        border: 1px solid #000;
+        box-shadow: none;
+    }
+}
