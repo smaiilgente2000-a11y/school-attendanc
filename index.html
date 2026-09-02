@@ -97,7 +97,12 @@
 
                 <div class="student-list-header">
                     <h3>قائمة التلاميذ (<span id="totalStudents">0</span>)</h3>
-                    <button onclick="exportStudents()" class="btn success">📥 تصدير القائمة</button>
+                    <div class="backup-actions no-print">
+                        <button onclick="exportDataBackup()" class="btn success" style="font-size:0.9rem;">💾 تصدير نسخة احتياطية</button>
+                        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importDataBackup(this.files[0])">
+                        <button onclick="document.getElementById('importFile').click()" class="btn primary" style="font-size:0.9rem;">📂 استيراد نسخة</button>
+                        <button onclick="exportStudents()" class="btn success" style="font-size:0.9rem;">📥 تصدير القائمة</button>
+                    </div>
                 </div>
                 <ul id="allStudentsList"></ul>
             </div>
