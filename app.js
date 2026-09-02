@@ -313,7 +313,7 @@ function deleteStudent(id) {
 
         saveData();
         updateDisplay();
-        showMessage('تم حذف التلميذ', 'warning');
+        showMessage('🗑️ تم حذف التلميذ', 'warning');
     }
 }
 
@@ -323,7 +323,7 @@ function resetTodayAttendance() {
         attendance[today] = [];
         saveData();
         updateDisplay();
-        showMessage('تم إعادة تعيين حضور اليوم', 'success');
+        showMessage('🔄 تم إعادة تعيين حضور اليوم', 'success');
     }
 }
 
@@ -335,7 +335,6 @@ function updateDisplay() {
     document.getElementById('presentStudentsStat').textContent = todayAttendance.length;
     document.getElementById('absentStudentsStat').textContent = students.length - todayAttendance.length;
 
-    // الحاضرون
     const presentStudents = students.filter(s => todayAttendance.includes(s.id));
     document.getElementById('presentList').innerHTML = presentStudents.map(s =>
         `<li>
@@ -345,7 +344,6 @@ function updateDisplay() {
     ).join('');
     document.getElementById('presentCount').textContent = presentStudents.length;
 
-    // الغائبون
     const absentStudents = students.filter(s => !todayAttendance.includes(s.id));
     document.getElementById('absentList').innerHTML = absentStudents.map(s =>
         `<li>
@@ -355,7 +353,6 @@ function updateDisplay() {
     ).join('');
     document.getElementById('absentCount').textContent = absentStudents.length;
 
-    // قائمة جميع التلاميذ (مع إضافة المستوى وزر البطاقة)
     document.getElementById('allStudentsList').innerHTML = students.map(s =>
         `<li>
             <div>
@@ -365,7 +362,7 @@ function updateDisplay() {
             </div>
             <div class="student-actions">
                 <button class="barcode-btn" onclick="generateBarcodeForStudent('${s.code}', '${s.name}')">🏷️ باركود</button>
-                <button class="card-btn" onclick="printCard(${s.id})" style="background:#17a2b8;color:white;">🖨️ بطاقة</button>
+                <button class="card-btn" onclick="printCard(${s.id})">🖨️ بطاقة</button>
                 <button class="delete-btn" onclick="deleteStudent(${s.id})">🗑️ حذف</button>
             </div>
         </li>`
@@ -539,7 +536,6 @@ function printCard(studentId) {
                         displayValue: true,
                         margin: 5
                     });
-                    // بعد توليد الباركود نطبع
                     setTimeout(function() {
                         window.print();
                     }, 500);
@@ -633,7 +629,6 @@ function printAllCards() {
         </div>
         <script>
             window.onload = function() {
-                // توليد الباركود لكل بطاقة
                 ${students.map(s => `
                     try {
                         JsBarcode("#barcode-${s.id}", "${s.code}", {
@@ -658,7 +653,47 @@ function printAllCards() {
     printWindow.document.close();
 }
 
-// ================ التصدير ================
+// ================ التصدير والاستيراد (النسخ الاحتياطي) ================
+function exportDataBackup() {
+    const data = {
+        students: students,
+        attendance: attendance
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `attendance-backup-${today}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showMessage('✅ تم تصدير النسخة الاحتياطية', 'success');
+}
+
+function importDataBackup(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.students && data.attendance) {
+                students = data.students;
+                attendance = data.attendance;
+                saveData();
+                updateDisplay();
+                showMessage('✅ تم استيراد البيانات بنجاح', 'success');
+            } else {
+                showMessage('❌ ملف غير صالح', 'error');
+            }
+        } catch (err) {
+            showMessage('❌ خطأ في قراءة الملف: ' + err.message, 'error');
+        }
+    };
+    reader.readAsText(file);
+    // إعادة تعيين قيمة الإدخال للسماح بتحديد نفس الملف مرة أخرى
+    document.getElementById('importFile').value = '';
+}
+
+// ================ تصدير تقرير الحضور وقائمة التلاميذ ================
 function exportAttendance() {
     const todayAttendance = attendance[today] || [];
     const presentStudents = students.filter(s => todayAttendance.includes(s.id));
@@ -703,10 +738,17 @@ function exportStudents() {
     showMessage('✅ تم تصدير قائمة التلاميذ', 'success');
 }
 
-// ================ حفظ البيانات ================
+// ================ حفظ البيانات مع التحقق ================
 function saveData() {
-    localStorage.setItem('students', JSON.stringify(students));
-    localStorage.setItem('attendance', JSON.stringify(attendance));
+    try {
+        localStorage.setItem('students', JSON.stringify(students));
+        localStorage.setItem('attendance', JSON.stringify(attendance));
+        // يمكنك تفعيل السطر التالي لرؤية رسالة حفظ ناجحة (اختياري)
+        // showMessage('💾 تم حفظ البيانات', 'success');
+    } catch (e) {
+        console.error('فشل حفظ البيانات:', e);
+        showMessage('❌ فشل حفظ البيانات في المتصفح. تأكد من المساحة المتاحة.', 'error');
+    }
 }
 
 // ================ التهيئة الأولية ================
